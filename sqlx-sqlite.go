@@ -15,8 +15,8 @@ var schema = `
 DROP TABLE IF EXISTS user;
 CREATE TABLE user (
 	user_id    INTEGER PRIMARY KEY,
-    first_name VARCHAR(80)  DEFAULT '',
-    last_name  VARCHAR(80)  DEFAULT '',
+  first_name VARCHAR(80)  DEFAULT '',
+  last_name  VARCHAR(80)  DEFAULT '',
 	email      VARCHAR(250) DEFAULT '',
 	password   VARCHAR(250) DEFAULT NULL
 );
@@ -28,6 +28,26 @@ type User struct {
 	LastName  string `db:"last_name"`
 	Email     string
 	Password  sql.NullString
+	test      sql.NullString
+}
+
+type StrWrap struct{ p *string }
+
+func NewStrWrap(p *string) StrWrap {
+	return StrWrap{p}
+}
+
+func (w StrWrap) Scan(src interface{}) error {
+	var i sql.NullString
+	if err := i.Scan(src); err != nil {
+		return err
+	}
+	if i.Valid {
+		*w.p = i.String
+	} else {
+		*w.p = ""
+	}
+	return nil
 }
 
 func main() {
@@ -44,10 +64,20 @@ func main() {
 
 	tx := db.MustBegin()
 	tx.MustExec("INSERT INTO user (first_name, last_name, email) VALUES ($1, $2, $3)", "Jason", "Moiron", "jmoiron@jmoiron.net")
+	tx.MustExec("INSERT INTO user (first_name, last_name, email) VALUES ($1, $2, $3)", "Jason", "Moiron", "jmoiron@jmoiron.net")
 	tx.MustExec("INSERT INTO user (first_name, last_name, email, password) VALUES ($1, $2, $3, $4)", "John", "Doe", "johndoeDNE@gmail.net", "supersecret")
 	// Named queries can use structs, so if you have an existing struct (i.e. person := &User{}) that you have populated, you can pass it in as &person
 	tx.NamedExec("INSERT INTO user (first_name, last_name, email) VALUES (:first_name, :last_name, :email)", &User{FirstName: "Jane", LastName: "Citizen", Email: "jane.citzen@example.com"})
 	tx.Commit()
+
+	// fetch one column from the db
+	rowsx, _ := db.Queryx("SELECT * FROM user WHERE first_name = 'Jason'")
+	// iterate over each row
+	for rowsx.Next() {
+		var f User
+		rowsx.StructScan(&f) // support null
+		fmt.Printf("%+v", f)
+	}
 
 	// Query the database, storing results in a []User (wrapped in []interface{})
 	people := []User{}
@@ -55,6 +85,15 @@ func main() {
 	jane, jason := people[0], people[1]
 
 	fmt.Printf("Jane: %#v\nJason: %#v\n", jane, jason)
+
+	var names []string
+	err = db.Select(&names, "SELECT first_name FROM user where first_name like ?", "Jan%")
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	fmt.Printf("\n\nSelect slice: %v\n", names)
+
 	// User{FirstName:"Jason", LastName:"Moiron", Email:"jmoiron@jmoiron.net"}
 	// User{FirstName:"John", LastName:"Doe", Email:"johndoeDNE@gmail.net"}
 

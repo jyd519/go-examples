@@ -1,10 +1,13 @@
 package main
 
-import "fmt"
-import "os"
+import (
+	"fmt"
+	"os"
+	"path/filepath"
+	"strings"
+)
 
 //import "strings"
-import "path/filepath"
 
 func main() {
 	fmt.Println("--- env ---")
@@ -28,9 +31,9 @@ func main() {
 	// form `KEY=value`. You can `strings.Split` them to
 	// get the key and value. Here we print all the keys.
 	//	fmt.Println()
-	//	for _, e := range os.Environ() {
-	//		pair := strings.Split(e, "=")
-	//		fmt.Printf("%s=%s    ", pair[0], pair[1])
-	//	}
+	for _, e := range os.Environ() {
+		pair := strings.Split(e, "=")
+		fmt.Printf("%s=%s    \n", pair[0], pair[1])
+	}
 	fmt.Println()
 }
