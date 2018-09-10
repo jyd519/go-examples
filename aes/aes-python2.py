@@ -3,6 +3,7 @@ from Crypto import Random
 from Crypto.Hash import SHA256
 import M2Crypto.EVP
 import base64
+import sys
 
 password = 'SecretKey'
 input = '80aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaIt works!'

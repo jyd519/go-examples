@@ -6,8 +6,10 @@ import (
 	"crypto/rand"
 	"crypto/sha256"
 	"encoding/base64"
+	"encoding/hex"
 	"fmt"
 	"io"
+	"os"
 )
 
 func keyEncrypt(keyStr string, cryptoText string) string {
@@ -70,9 +72,24 @@ func decrypt(key []byte, cryptoText string) string {
 }
 
 func main() {
-	// encrypted := "lIR3JIHpomC5Zm8sjy29D/xFcXUX0c/4vQ=="
 
-	encrypted := "8t1pHqgi/56rM3zg9orwC03d2/wSulMKgg=="
-	fmt.Println(encrypted)
-	fmt.Println(keyDecrypt("SecretKey", encrypted))
+	const tokenKey = "abcd"
+
+	if len(os.Args) > 2 {
+		if os.Args[1] == "d" {
+			fmt.Println(keyDecrypt(tokenKey, os.Args[2]))
+		} else {
+			fmt.Println(keyEncrypt(tokenKey, os.Args[2]))
+		}
+	} else {
+		// encrypted := "lIR3JIHpomC5Zm8sjy29D/xFcXUX0c/4vQ=="
+
+		encrypted := keyEncrypt("SecretKey", "It works!!!!")
+		fmt.Println(encrypted)
+		fmt.Println(keyDecrypt("SecretKey", encrypted))
+
+		encrypted = "arQxp4ZyHIQSb6zTAJVsaXnXJw1GhfyX8w=="
+		fmt.Println(keyDecrypt("SecretKey", encrypted))
+
+	}
 }

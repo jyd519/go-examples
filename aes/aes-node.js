@@ -40,3 +40,15 @@ console.log('Decrypted: ', decrypted);
 const decrypted2 = decryptText('8t1pHqgi/56rM3zg9orwC03d2/wSulMKgg==', 'SecretKey');
 console.log('Decrypted: ', decrypted2);
 
+
+const kTokenKey = 'abcde';
+
+if (process.argv.length > 1) {
+  if (process.argv[2] === 'd') {
+    const decrypted2 = decryptText(process.argv[3], kTokenKey);
+    console.log('Decrypted: ', decrypted2);
+  } else {
+    const encrypted = encryptText(process.argv[3], kTokenKey);
+    console.log('Encrypted: ', encrypted);
+  }
+}

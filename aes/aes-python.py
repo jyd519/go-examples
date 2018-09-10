@@ -22,7 +22,6 @@ def encrypt(data, password):
 def decrypt(edata, password):
     edata = base64.b64decode(edata)
     iv = edata[:16]
-
     m = hashes.Hash(hashes.SHA256(), backend=default_backend())
     m.update(password)
     key = m.finalize()
@@ -37,13 +36,22 @@ def main():
   password = 'SecretKey'
   plain_text = 'It works!'
 
+  if len(sys.argv) > 1:
+    kTokenKey = r'abcde'
+    print(sys.argv[1])
+    print(decrypt(sys.argv[1], kTokenKey))
+    return
+
   output = encrypt(plain_text, password)
   print(output)
   plaintext = decrypt(output, password)
-  print("'" + plaintext + "'")
+  print(plaintext)
 
   plaintext = decrypt("dqlwpamXtpvPnfBXpurYmvbapbs0XSvDAg==", password)
-  print("'" + plaintext + "'")
+  print(plaintext)
+
+  plaintext = decrypt("UWFBS2fpI8o+HrnzCp5wWOzPi4Lhd9BERLs3rQ==", password)
+  print(plaintext)
 
 if __name__ == '__main__':
   sys.exit(main())
