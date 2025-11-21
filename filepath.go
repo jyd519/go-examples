@@ -13,4 +13,6 @@ func main() {
 	fmt.Println(filepath.FromSlash("c/sd\\fasd/sdfasdf/sdfsdf"))
 	fmt.Println(filepath.ToSlash("c/sdf\\asd/sdfasdf/sdfsdf"))
 
+	fmt.Println(filepath.Join("home", "hello", "world.txt"))
+	fmt.Println(filepath.Join("home", "hello/world.txt"))
 }
